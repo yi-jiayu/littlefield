@@ -8,7 +8,7 @@ session_id_regex = re.compile('JSESSIONID=(\w+);')
 points_regex = re.compile("points: '((?:\d+ [\d.]+ ?)+)'")
 orders_info_regex = re.compile(r'''<b>Maximum WIP Limit: </b>(\d+) jobs<BR>
 <B>Number of kits in 1 job: </B>(\d+)<BR>
-<B>Lot size: </B>(\d+) kits, or (\d+) lot per job<BR>
+<B>Lot size: </B>(\d+) kits, or (\d+) lots? per job<BR>
 <B>Current contract: </B>(\d+)<BR>
 <DD>Quoted lead time: ([\d.]+) day\(s\)<BR>
 <DD>Maximum lead time: ([\d.]+) day\(s\)<BR>
