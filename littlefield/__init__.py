@@ -120,6 +120,9 @@ class Littlefield:
         self.station3 = Station(self, 3)
         self.completed_jobs = CompletedJobs(self)
 
+    def cash(self, x='all'):
+        return self._get_data(Data.CASH, x)
+
     @staticmethod
     def _get_credentials_from_environment():
         un = os.getenv('LITTLEFIELD_TEAM_ID', '')
