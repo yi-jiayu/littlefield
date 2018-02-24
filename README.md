@@ -1,6 +1,9 @@
 # littlefield
 Python SDK for the Littlefield simulation game
 
+## Demo
+[![asciicast](https://asciinema.org/a/165140.png)](https://asciinema.org/a/165140)
+
 ## Installation
 ```pip install git+https://github.com/yi-jiayu/littlefield.git```
 
