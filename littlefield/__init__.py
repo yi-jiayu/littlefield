@@ -1,5 +1,6 @@
 import requests
 import re
+import os
 
 from collections import namedtuple
 from enum import Enum
@@ -104,10 +105,13 @@ def parse_station_info(num_machines, scheduling_policy, purchase_price, retireme
 
 
 class Littlefield:
-    def __init__(self, team_id, password):
-        self.team_id = team_id
-        self.password = password
-        self.session_id = self._get_session_id(team_id, password)
+    def __init__(self, team_id='', password=''):
+        if team_id == '' or password == '':
+            self.team_id, self.password = Littlefield._get_credentials_from_environment()
+        else:
+            self.team_id = team_id
+            self.password = password
+        self.session_id = self._get_session_id()
 
         self.orders = Orders(self)
         self.materials = Materials(self)
@@ -117,9 +121,14 @@ class Littlefield:
         self.completed_jobs = CompletedJobs(self)
 
     @staticmethod
-    def _get_session_id(team_id, password):
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        payload = {'institution': 'sharma', 'ismobile': 'false', 'id': team_id, 'password': password}
+    def _get_credentials_from_environment():
+        un = os.getenv('LITTLEFIELD_TEAM_ID', '')
+        pw = os.getenv('LITTLEFIELD_PASSWORD', '')
+        return un, pw
+
+    def _get_session_id(self):
+        headers = {'User-Agent': ''}
+        payload = {'institution': 'sharma', 'ismobile': 'false', 'id': self.team_id, 'password': self.password}
         r = requests.post('http://op.responsive.net/Littlefield/CheckAccess', headers=headers, data=payload)
         cookie = r.headers.get('Set-Cookie')
         m = session_id_regex.search(cookie)
