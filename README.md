@@ -33,7 +33,7 @@ print(lf.materials.info())
 print(lf.materials.inventory())
 print(lf.station1.info())
 print(lf.station1.queue_size())
-print(lf.completed_jobs.lead_time())
+print(lf.completed_jobs.lead_times())
 ```
 
 ## Docs
