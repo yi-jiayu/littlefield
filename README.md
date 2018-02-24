@@ -39,5 +39,9 @@ print(lf.station1.queue_size())
 print(lf.completed_jobs.lead_times())
 ```
 
+## To-do
+- [ ] Automatically refresh session cookie
+- [ ] Edit factory settings
+
 ## Docs
 Coming soon!
