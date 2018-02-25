@@ -7,6 +7,7 @@ from enum import Enum
 
 session_id_regex = re.compile('JSESSIONID=(\w+);')
 points_regex = re.compile("points: '((?:\d+ [\d.]+ ?)+)'")
+multi_points_regex = re.compile("label: '([\d\w\s]+)', name: '([^']+)', points: '((?:\d+ [\d.]+ ?)+)'")
 orders_info_regex = re.compile(r'''<b>Maximum WIP Limit: </b>(\d+) jobs<BR>
 <B>Number of kits in 1 job: </B>(\d+)<BR>
 <B>Lot size: </B>(\d+) kits, or (\d+) lots? per job<BR>
@@ -145,6 +146,23 @@ class Littlefield:
         r = requests.get('http://op.responsive.net/Littlefield/' + path, cookies=cookie, params=params)
         return r.text
 
+    def _set(self, path, data):
+        cookie = {'JSESSIONID': self.session_id}
+        r = requests.post('http://op.responsive.net/Littlefield/' + path, cookies=cookie, data=data)
+        return r.text
+
+    def _get_data_multi(self, data, x='all'):
+        if isinstance(data, Enum):
+            data = data.value
+
+        raw = self._get('Plot?data={}&x={}'.format(data, x))
+        matches = multi_points_regex.findall(raw)
+        if matches is None:
+            raise RuntimeError('failed to extract data')
+
+        data = [(lbl, name, list(self._to_points(pts))) for lbl, name, pts in matches]
+        return data
+
     def _get_data(self, data, x='all'):
         if isinstance(data, Enum):
             data = data.value
@@ -201,6 +219,26 @@ class Materials:
 
         return parse_materials_info(*m.groups())
 
+    def set_reorder_point(self, r):
+        curr_order_quantity = self.info(True).order_quantity_batches
+        new_val = r * curr_order_quantity
+        data = {
+            'pwd': lf.password,
+            'submit': 'confirm',
+            'trans': 'ORDERPOINT,{}'.format(new_val),
+        }
+        return lf._set('MaterialForm', data)
+
+    def set_order_quantity(self, q):
+        curr_reorder_point = self.info(True).reorder_point_batches
+        new_val = q * curr_reorder_point
+        data = {
+            'pwd': lf.password,
+            'submit': 'confirm',
+            'trans': 'ORDERQUANT,{}'.format(new_val),
+        }
+        return lf._set('MaterialForm', data)
+
 
 class Station:
     def __init__(self, lf, id):
@@ -228,10 +266,10 @@ class CompletedJobs:
         self.lf = lf
 
     def count(self, x='all'):
-        return self.lf._get_data(Data.COMPLETED_JOB_COUNT, x)
+        return self.lf._get_data_multi(Data.COMPLETED_JOB_COUNT, x)
 
     def lead_times(self, x='all'):
-        return self.lf._get_data(Data.LEAD_TIMES, x)
+        return self.lf._get_data_multi(Data.LEAD_TIMES, x)
 
     def revenues(self, x='all'):
-        return self.lf._get_data(Data.REVENUES, x)
+        return self.lf._get_data_multi(Data.REVENUES, x)
