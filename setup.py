@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='littlefield',
-      version='0.3.0',
+      version='0.3.3',
       description='API for the Littlefield simulation',
       url='http://github.com/yi-jiayu/littlefield',
       author='Jiayu Yi',

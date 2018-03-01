@@ -223,21 +223,21 @@ class Materials:
         curr_order_quantity = self.info(True).order_quantity_batches
         new_val = r * curr_order_quantity
         data = {
-            'pwd': lf.password,
+            'pwd': self.lf.password,
             'submit': 'confirm',
             'trans': 'ORDERPOINT,{}'.format(new_val),
         }
-        return lf._set('MaterialForm', data)
+        return self.lf._set('MaterialForm', data)
 
     def set_order_quantity(self, q):
         curr_reorder_point = self.info(True).reorder_point_batches
         new_val = q * curr_reorder_point
         data = {
-            'pwd': lf.password,
+            'pwd': self.lf.password,
             'submit': 'confirm',
             'trans': 'ORDERQUANT,{}'.format(new_val),
         }
-        return lf._set('MaterialForm', data)
+        return self.lf._set('MaterialForm', data)
 
 
 class Station:
